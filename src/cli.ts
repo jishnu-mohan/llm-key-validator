@@ -114,17 +114,17 @@ function parseArgs(argv: string[]): ParsedArgs {
 }
 
 function helpText(): string {
-  return `llm-key-validator v${VERSION}
+  return `llm-key-validator v${VERSION}  (alias: lkv)
 
 Validate API keys for OpenAI, Anthropic, Google, Groq, Mistral, OpenRouter,
 Cohere, DeepSeek, Together, Fireworks, xAI, and Perplexity.
 
 Usage:
-  llm-key-validator <key> [<key>...] [options]
-  llm-key-validator --stdin [options]
-  llm-key-validator --env [options]
-  llm-key-validator scan [<file>...] [options]
-  llm-key-validator --list-providers
+  lkv <key> [<key>...] [options]
+  lkv --stdin [options]
+  lkv --env [options]
+  lkv scan [<file>...] [options]
+  lkv --list-providers
 
 Options:
   -p, --provider <name>   Force a specific provider (skip auto-detect).
@@ -140,13 +140,16 @@ Options:
   -h, --help              Show this help
 
 Examples:
-  llm-key-validator sk-ant-...                  # auto-detect provider
-  llm-key-validator -p openai $OPENAI_API_KEY   # force provider
-  llm-key-validator --env                       # check all env-var keys
-  llm-key-validator --offline sk-...            # format-only, no network
-  llm-key-validator scan                        # scan .env / .env.local
-  llm-key-validator scan .env.production
-  echo "$ANTHROPIC_API_KEY" | llm-key-validator --stdin
+  lkv sk-ant-...                            # auto-detect provider
+  lkv -p openai $OPENAI_API_KEY             # force provider
+  lkv --env                                 # check all env-var keys
+  lkv --offline sk-...                      # format-only, no network
+  lkv scan                                  # scan .env / .env.local
+  lkv scan .env.production
+  echo "$ANTHROPIC_API_KEY" | lkv --stdin
+
+Tip: 'lkv' and 'llm-key-validator' are aliases for the same command.
+     Use 'npx llm-key-validator ...' for one-shots without installing.
 
 Exit codes:
   0  all keys valid

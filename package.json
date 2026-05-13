@@ -39,7 +39,8 @@
     }
   },
   "bin": {
-    "llm-key-validator": "./dist/cli.cjs"
+    "llm-key-validator": "./dist/cli.cjs",
+    "lkv": "./dist/cli.cjs"
   },
   "files": [
     "dist/**/*.js",
@@ -97,7 +98,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p examples/tsconfig.json",
     "size": "size-limit",
     "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
