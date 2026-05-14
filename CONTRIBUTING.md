@@ -118,7 +118,9 @@ in [the changelog](CHANGELOG.md). The typical flow:
    ```
 4. **What happens automatically**: [`.github/workflows/release.yml`](.github/workflows/release.yml)
    matches the `v*` tag and runs lint → typecheck → test → build → `npm publish
-   --provenance --access public`. Requires the `NPM_TOKEN` repo secret.
+   --provenance --access public` via npm Trusted Publishing (OIDC, no token
+   secret needed — configured at
+   https://www.npmjs.com/package/llm-key-validator/access).
 5. **Verify** on https://www.npmjs.com/package/llm-key-validator.
 
 ### If the publish step fails
