@@ -1,0 +1,136 @@
+{
+  "name": "llm-key-validator",
+  "version": "1.0.0",
+  "description": "Validate API keys for OpenAI, Anthropic, Google Gemini, Groq, Mistral, OpenRouter, Cohere, DeepSeek, Together, Fireworks, xAI, and Perplexity. Zero dependencies. CLI + library.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./core": {
+      "import": {
+        "types": "./dist/core/index.d.ts",
+        "default": "./dist/core/index.js"
+      },
+      "require": {
+        "types": "./dist/core/index.d.cts",
+        "default": "./dist/core/index.cjs"
+      }
+    },
+    "./providers": {
+      "import": {
+        "types": "./dist/providers/standalone.d.ts",
+        "default": "./dist/providers/standalone.js"
+      },
+      "require": {
+        "types": "./dist/providers/standalone.d.cts",
+        "default": "./dist/providers/standalone.cjs"
+      }
+    }
+  },
+  "bin": {
+    "llm-key-validator": "./dist/cli.cjs",
+    "lkv": "./dist/cli.cjs"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.cjs",
+    "dist/**/*.d.ts",
+    "dist/**/*.d.cts",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "author": "Jishnu Mohan <jishnumpr@gmail.com>",
+  "homepage": "https://github.com/jishnu-mohan/llm-key-validator#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jishnu-mohan/llm-key-validator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jishnu-mohan/llm-key-validator/issues"
+  },
+  "keywords": [
+    "api-key",
+    "api-key-validator",
+    "validate-api-key",
+    "openai",
+    "anthropic",
+    "claude",
+    "gemini",
+    "google",
+    "groq",
+    "mistral",
+    "openrouter",
+    "cohere",
+    "perplexity",
+    "deepseek",
+    "together",
+    "fireworks",
+    "xai",
+    "grok",
+    "llm",
+    "ai",
+    "key-check",
+    "key-validation",
+    "validation",
+    "cli",
+    "auth"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p examples/tsconfig.json",
+    "size": "size-limit",
+    "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@size-limit/esbuild": "^11.1.0",
+    "@size-limit/file": "^11.1.0",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "size-limit": "^11.1.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "size-limit": [
+    {
+      "name": "main (eager, all 12 providers)",
+      "path": "dist/index.js",
+      "limit": "3 KB",
+      "import": "{ validateKey }"
+    },
+    {
+      "name": "core only (no providers loaded)",
+      "path": "dist/core/index.js",
+      "limit": "1.5 KB",
+      "import": "{ validateKey }"
+    },
+    {
+      "name": "single provider (tree-shaken)",
+      "path": "dist/providers/standalone.js",
+      "limit": "500 B",
+      "import": "{ openai }"
+    }
+  ]
+}

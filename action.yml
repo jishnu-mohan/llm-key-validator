@@ -1,0 +1,54 @@
+name: "Validate LLM API Keys"
+description: "Validate API keys for OpenAI, Anthropic, Google, Groq, Mistral, OpenRouter, Cohere, DeepSeek, Together, Fireworks, xAI, and Perplexity."
+author: "Jishnu Mohan"
+branding:
+  icon: "key"
+  color: "green"
+
+inputs:
+  args:
+    description: "Arguments passed to llm-key-validator. Defaults to '--env --json' (validates every <PROVIDER>_API_KEY env var)."
+    required: false
+    default: "--env --json"
+  version:
+    description: "Package version to run. Use 'latest' for the most recent release."
+    required: false
+    default: "latest"
+  fail-on-invalid:
+    description: "Fail the action (exit 1) when any key is invalid. Default true."
+    required: false
+    default: "true"
+
+outputs:
+  results:
+    description: "The JSON output of the CLI (when --json is in args)."
+    value: ${{ steps.run.outputs.results }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: run
+      shell: bash
+      run: |
+        set +e
+        output=$(npx --yes llm-key-validator@${{ inputs.version }} ${{ inputs.args }})
+        code=$?
+        set -e
+
+        # Persist output for downstream steps; mask multiline.
+        {
+          echo "results<<__EOF__"
+          echo "$output"
+          echo "__EOF__"
+        } >> "$GITHUB_OUTPUT"
+
+        echo "$output"
+
+        if [ "${{ inputs.fail-on-invalid }}" = "true" ] && [ $code -eq 2 ]; then
+          echo "::error::One or more API keys are invalid."
+          exit 1
+        fi
+        if [ $code -ne 0 ] && [ $code -ne 2 ]; then
+          echo "::error::llm-key-validator exited with code $code"
+          exit $code
+        fi
