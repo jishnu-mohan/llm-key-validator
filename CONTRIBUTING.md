@@ -58,6 +58,25 @@ npm run build        # tsup → dist/ (ESM + CJS + .d.ts)
 npm run size         # size-limit budgets
 ```
 
+### Python sibling package
+
+The `python/` directory ships a stdlib-only port of the same library and CLI.
+When you add or modify a provider in `src/providers/`, mirror the change in
+`python/src/llm_key_validator/providers/<name>.py` so the two packages stay in
+lockstep — same regex, same probe URL, same headers, same registration order.
+
+```bash
+cd python
+pip install -e ".[dev]"
+pytest                                     # 115 tests; no network
+ruff check . && ruff format --check .
+mypy src/llm_key_validator                 # strict
+python -m build && twine check dist/*      # release artifact gate
+```
+
+CI for Python lives in [`.github/workflows/python-ci.yml`](.github/workflows/python-ci.yml)
+and runs only on `python/**` changes across Python 3.10–3.13.
+
 The full pre-publish pipeline runs locally via:
 
 ```bash

@@ -1,0 +1,90 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-key-validator"
+version = "1.0.0"
+description = "Validate API keys for OpenAI, Anthropic, Google Gemini, Groq, Mistral, OpenRouter, Cohere, DeepSeek, Together, Fireworks, xAI, and Perplexity. Zero dependencies. CLI + library."
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Jishnu Mohan", email = "jishnumpr@gmail.com" }]
+requires-python = ">=3.10"
+keywords = [
+    "api-key", "api-key-validator", "validate-api-key",
+    "openai", "anthropic", "claude", "gemini", "google", "groq",
+    "mistral", "openrouter", "cohere", "perplexity", "deepseek",
+    "together", "fireworks", "xai", "grok",
+    "llm", "ai", "key-check", "key-validation", "validation", "cli", "auth",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/jishnu-mohan/llm-key-validator"
+Issues = "https://github.com/jishnu-mohan/llm-key-validator/issues"
+Source = "https://github.com/jishnu-mohan/llm-key-validator"
+
+[project.scripts]
+llm-key-validator = "llm_key_validator.cli:main"
+lkv = "llm_key_validator.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "mypy>=1.10",
+    "build>=1.2",
+    "twine>=5.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llm_key_validator"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "tests/", "README.md", "pyproject.toml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "RUF", "SIM"]
+ignore = ["E501", "RUF059"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unreachable = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+files = ["src/llm_key_validator"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"
