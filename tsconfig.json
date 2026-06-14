@@ -3,6 +3,8 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    // tsup's DTS bundler injects a deprecated `baseUrl`; TS 6 errors on it without this.
+    "ignoreDeprecations": "6.0",
     "lib": ["ES2022"],
     "strict": true,
     "noImplicitOverride": true,

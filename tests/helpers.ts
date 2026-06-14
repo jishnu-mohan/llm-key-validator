@@ -35,7 +35,6 @@ export function mockFetch(
     }
 
     const status = cfg.status ?? 200;
-    const ok = cfg.ok ?? (status >= 200 && status < 300);
     return new Response(cfg.body !== undefined ? JSON.stringify(cfg.body) : null, {
       status,
       headers: { "content-type": "application/json" },

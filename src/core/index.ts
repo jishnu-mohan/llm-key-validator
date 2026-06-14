@@ -1,18 +1,19 @@
 // Tree-shakable entry: core validation primitives without auto-registering any providers.
 // Pair this with `llm-key-validator/providers` and pass `providers: [...]` to `validateKey`.
-export { validateKey, validateKeys, normalizeKey } from "./validate.js";
+
 export {
-  registerProvider,
-  unregisterProvider,
+  detectProvider,
   getProvider,
   listProviders,
-  detectProvider,
+  registerProvider,
+  unregisterProvider,
 } from "./registry.js";
 export type {
   Provider,
   ProviderRawResult,
   ValidationContext,
+  ValidationFailureReason,
   ValidationOptions,
   ValidationResult,
-  ValidationFailureReason,
 } from "./types.js";
+export { normalizeKey, validateKey, validateKeys } from "./validate.js";
