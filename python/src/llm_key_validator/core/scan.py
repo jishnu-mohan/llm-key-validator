@@ -24,7 +24,7 @@ _PLACEHOLDER_PATTERNS = [
 ]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class EnvEntry:
     name: str
     value: str

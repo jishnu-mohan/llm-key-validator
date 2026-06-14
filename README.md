@@ -38,7 +38,7 @@ npx llm-key-validator <key>
 # as a library
 npm i llm-key-validator
 
-# Python (≥ 3.10, stdlib only, same CLI surface)
+# Python (≥ 3.8, stdlib only, same CLI surface)
 pip install llm-key-validator
 ```
 

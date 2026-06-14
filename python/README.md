@@ -10,7 +10,7 @@ This is the Python sibling of the [npm package of the same name](https://www.npm
 pip install llm-key-validator
 ```
 
-Requires Python ≥ 3.10.
+Requires Python ≥ 3.8.
 
 ## Library
 
