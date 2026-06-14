@@ -17,7 +17,7 @@ ValidationFailureReason = Literal[
 HttpErrorReason = Literal["timeout", "network_error", "server_error"]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class HttpResponse:
     status: int
     ok: bool
@@ -45,19 +45,19 @@ class HttpFn(Protocol):
     ) -> HttpResponse: ...
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ValidationContext:
     http: HttpFn
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ProviderRawResult:
     status: int
     ok: bool
     metadata: dict[str, Any] | None = None
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class Provider:
     name: str
     display_name: str
@@ -66,7 +66,7 @@ class Provider:
     key_env_var: str | None = None
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ValidationResult:
     valid: bool
     provider: str
