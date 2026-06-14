@@ -29,7 +29,7 @@ Not the right fit for: server-side runtime auth (handle 401 at request time), or
 ## Install
 
 ```bash
-# global CLI (installs both `lkv` and `llm-key-validator` commands)
+# Node / TypeScript — global CLI (installs both `lkv` and `llm-key-validator`)
 npm i -g llm-key-validator
 
 # or one-shot without installing
@@ -37,10 +37,14 @@ npx llm-key-validator <key>
 
 # as a library
 npm i llm-key-validator
+
+# Python (≥ 3.10, stdlib only, same CLI surface)
+pip install llm-key-validator
 ```
 
 After global install, use the short alias `lkv` everywhere — both commands are
-interchangeable.
+interchangeable. The Python and npm packages ship in lockstep; see
+[`python/README.md`](python/README.md) for Python-specific examples.
 
 ## CLI
 

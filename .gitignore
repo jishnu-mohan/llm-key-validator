@@ -13,3 +13,17 @@ coverage/
 CLAUDE.md
 *.tsbuildinfo
 *.tgz
+
+# Python
+python/.venv/
+python/dist/
+python/build/
+python/*.egg-info/
+python/src/*.egg-info/
+python/uv.lock
+python/.venv-*/
+python/.pytest_cache/
+python/.mypy_cache/
+python/.ruff_cache/
+__pycache__/
+*.pyc
