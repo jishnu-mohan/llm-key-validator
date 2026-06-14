@@ -2,20 +2,20 @@ import { registerBuiltInProviders } from "./providers/index.js";
 
 registerBuiltInProviders();
 
-export { validateKey, validateKeys, normalizeKey } from "./core/validate.js";
 export {
-  registerProvider,
-  unregisterProvider,
+  detectProvider,
   getProvider,
   listProviders,
-  detectProvider,
+  registerProvider,
+  unregisterProvider,
 } from "./core/registry.js";
 export type {
   Provider,
   ProviderRawResult,
   ValidationContext,
+  ValidationFailureReason,
   ValidationOptions,
   ValidationResult,
-  ValidationFailureReason,
 } from "./core/types.js";
+export { normalizeKey, validateKey, validateKeys } from "./core/validate.js";
 export { builtInProviders, registerBuiltInProviders } from "./providers/index.js";

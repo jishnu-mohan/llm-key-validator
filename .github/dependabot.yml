@@ -6,6 +6,23 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 5
     groups:
+      # Lockstep package sets: the plugin's major version must match its core
+      # (coverage-v8 <-> vitest, the size-limit plugins <-> size-limit core).
+      # Group them with `major` included so an upgrade ships as ONE PR that
+      # bumps the whole set, instead of a lone PR that breaks `npm ci`.
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+        update-types: ["major", "minor", "patch"]
+      size-limit:
+        patterns:
+          - "size-limit"
+          - "@size-limit/*"
+        update-types: ["major", "minor", "patch"]
+      # Everything else: minor/patch only. Standalone majors (typescript,
+      # biome) still arrive as individual PRs, which is fine — they have no
+      # peer that must move with them.
       dev-dependencies-minor-patch:
         dependency-type: "development"
         update-types: ["minor", "patch"]
