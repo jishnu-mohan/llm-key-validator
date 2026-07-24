@@ -5,35 +5,31 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![node](https://img.shields.io/node/v/llm-key-validator.svg)](package.json)
 
-Validate API keys for **OpenAI, Anthropic, Google Gemini, Groq, Mistral, OpenRouter, Cohere, DeepSeek, Together, Fireworks, xAI, and Perplexity** — as a CLI or a TypeScript library.
+Check if an LLM API key is valid — no install required:
 
-- Zero runtime dependencies (uses native `fetch`, Node ≥ 20)
-- Modular: add a new provider in ~15 lines
-- Library + CLI + GitHub Action from one install
+```bash
+npx llm-key-validator sk-ant-...
+```
+
+Supports **OpenAI, Anthropic, Google Gemini, Groq, Mistral, OpenRouter, Cohere,
+DeepSeek, Together, Fireworks, xAI, and Perplexity**, as a CLI or a TypeScript
+library. Zero runtime dependencies, works in Node ≥ 20 (and Bun/Deno/Cloudflare
+Workers/browsers as a library).
+
+- Auto-detects the provider from the key's prefix
 - Distinguishes invalid keys from rate limits, timeouts, and network errors
-- Env-var aware (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, etc.)
-- Tree-shakable: bundle only the providers you import (~500 B per provider; 2 KB for all 12)
-- Works in Node, Bun, Deno, Cloudflare Workers, and browsers
-- `--offline` mode for instant format-only validation (no network call)
-- `scan` subcommand for `.env` file audits
-
-## Who is this for?
-
-- **BYOK SaaS builders** (Cursor/Cline/OpenWebUI/LibreChat clones) — one library replaces 12 per-provider error-mapping branches
-- **Developers with many AI keys** — `lkv --env` tells you which still work
-- **DevOps / platform teams** — CI/CD pre-flight and cron monitoring; clean exit codes
-- **On-call debugging** — instantly distinguishes "key revoked" from "provider down"
-
-Not the right fit for: server-side runtime auth (handle 401 at request time), org/scope introspection, cost/usage analytics.
+- `--env` validates every `*_API_KEY` in your environment; `scan` audits a `.env` file
+- `--offline` mode checks key format with no network call
+- Also available as a library (`npm i llm-key-validator`) and a GitHub Action
 
 ## Install
 
 ```bash
-# Node / TypeScript — global CLI (installs both `lkv` and `llm-key-validator`)
-npm i -g llm-key-validator
-
-# or one-shot without installing
+# no install — one-shot
 npx llm-key-validator <key>
+
+# global CLI (installs both `lkv` and `llm-key-validator`)
+npm i -g llm-key-validator
 
 # as a library
 npm i llm-key-validator
@@ -42,15 +38,14 @@ npm i llm-key-validator
 pip install llm-key-validator
 ```
 
-After global install, use the short alias `lkv` everywhere — both commands are
-interchangeable. The Python and npm packages ship in lockstep; see
+After global install, use the short alias `lkv` everywhere. See
 [`python/README.md`](python/README.md) for Python-specific examples.
 
 ## CLI
 
 ```bash
 # auto-detect provider from key prefix
-lkv sk-ant-...
+npx llm-key-validator sk-ant-...
 
 # force a provider
 lkv <key> --provider openai
@@ -64,32 +59,24 @@ lkv <key1> <key2> <key3>
 # validate every <PROVIDER>_API_KEY found in the environment
 lkv --env
 
-# provider env-var fallback: read OPENAI_API_KEY from env
-lkv --provider openai
-
 # JSON output for scripting
 lkv <key> --json
-
-# list all supported providers (and their env vars)
-lkv --list-providers
 
 # offline mode — format-only check, no network call
 lkv --offline sk-ant-...
 
 # scan a .env file (.env and .env.local are checked by default)
 lkv scan
-lkv scan .env.production
 lkv scan --check-revoked   # hide VALIDs, show only failures
 ```
 
 Exit codes: `0` all valid, `1` usage error, `2` ≥ 1 invalid, `3` unexpected error.
+Run `lkv --help` for the full flag list.
 
 ## Library
 
-### Default (eager — all 12 providers loaded)
-
 ```ts
-import { validateKey, validateKeys } from "llm-key-validator";
+import { validateKey } from "llm-key-validator";
 
 const result = await validateKey("sk-ant-...");
 if (result.valid) {
@@ -97,15 +84,10 @@ if (result.valid) {
 } else {
   console.log("Failed:", result.reason, result.message);
 }
-
-// Bulk
-const results = await validateKeys([key1, key2]);
 ```
 
-### Tree-shakable (only pay for what you use)
-
-For browser bundles, edge workers, or library consumers that only care about
-one or two providers, import from `/core` + `/providers`:
+For bundle-size-sensitive consumers (browser, edge workers), import only the
+providers you need:
 
 ```ts
 import { validateKey } from "llm-key-validator/core";
@@ -114,51 +96,34 @@ import { openai, anthropic } from "llm-key-validator/providers";
 await validateKey(key, { providers: [openai, anthropic] });
 ```
 
-The core entry has zero side effects; bundlers will drop every provider you
-don't import. Typical bundle sizes:
-
-| Entry | Size (min+gz) |
-|---|---|
-| `llm-key-validator` (eager, 12 providers) | ~5 KB |
-| `llm-key-validator/core` (no providers) | ~2 KB |
-| `llm-key-validator/providers` (single import) | ~0.5 KB per provider |
+`llm-key-validator/core` has zero import-time side effects, so bundlers drop
+every provider you don't import (~500 B per provider vs. ~5 KB for the eager
+default with all 12).
 
 ### Options
 
 ```ts
 await validateKey(key, {
   provider: "anthropic",  // force, skip auto-detect
-  providers: [openai],    // scope detection to this list (tree-shake friendly)
   offline: true,          // skip network call; format-only check
   timeoutMs: 5000,        // default 10_000
   retries: 1,             // default 1 (5xx / network errors)
-  fetch: customFetch,     // injectable
-  signal: abortSignal,
 });
 ```
 
-### Browser, Bun, Cloudflare Workers, Deno
-
-The library is pure `fetch` + `AbortController` — no Node-specific globals. See
-[examples/](examples/) for a browser HTML demo, a Cloudflare Worker, and a Bun
-script.
-
-### Result shape
+Result shape:
 
 ```ts
 type ValidationResult =
-  | { valid: true;  provider: string; latencyMs: number; metadata?: Record<string, unknown> }
-  | { valid: false; provider: string; reason: ValidationFailureReason; status?: number; message: string; latencyMs: number };
+  | { valid: true;  provider: string; latencyMs: number }
+  | { valid: false; provider: string; reason: ValidationFailureReason; message: string };
 
 type ValidationFailureReason =
-  | "invalid_key"      // 401 / 403
-  | "rate_limited"     // 429 — key is likely valid but throttled
-  | "server_error"     // 5xx after retries
-  | "network_error"    // DNS / connection refused
-  | "timeout"
-  | "unknown_provider"
-  | "malformed_key";
+  | "invalid_key" | "rate_limited" | "server_error"
+  | "network_error" | "timeout" | "unknown_provider" | "malformed_key";
 ```
+
+See [examples/](examples/) for browser, Cloudflare Worker, and Bun usage.
 
 ## Supported providers
 
@@ -181,27 +146,7 @@ type ValidationFailureReason =
 >
 > **Auto-detect caveat**: Mistral and Cohere keys are opaque alphanumeric strings with no distinguishing prefix. They are tried *last* during auto-detect to minimize false positives, but for any 32- or 40-character alphanumeric input, prefer `--provider mistral` or `--provider cohere` to be explicit.
 
-## Adding a new provider
-
-```ts
-// my-provider.ts
-import { registerProvider, type Provider } from "llm-key-validator";
-
-const myProvider: Provider = {
-  name: "myprovider",
-  displayName: "My Provider",
-  detect: (key) => key.startsWith("mp_"),
-  validate: async (key, { http, signal }) => {
-    const res = await http("https://api.myprovider.com/v1/me", {
-      headers: { Authorization: `Bearer ${key}` },
-      signal,
-    });
-    return { status: res.status, ok: res.ok };
-  },
-};
-
-registerProvider(myProvider);
-```
+Want to add a provider? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## GitHub Action
 
